@@ -15,8 +15,15 @@ class ViewController: UIViewController {
     var percent: UIPercentDrivenInteractiveTransition = UIPercentDrivenInteractiveTransition()
     let secondVC = SecondViewController()
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.delegate = self.transitionDelegate
+
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         let blueView = UIImageView()
         blueView.frame = CGRect(x: 100, y: 88, width: 100, height: 100)
@@ -35,8 +42,9 @@ class ViewController: UIViewController {
         addTransitionView(view2, key: "red")
         
         self.transitionDelegate = TransitionDelegate(present: Transition(true), dismiss: Transition(false), interPresent: percent, interDismiss: percent)
-        secondVC.modalPresentationStyle = .custom
-        secondVC.transitioningDelegate = transitionDelegate
+//        secondVC.navigationController?.delegate = self.transitionDelegate
+//        secondVC.modalPresentationStyle = .custom
+//        secondVC.transitioningDelegate = transitionDelegate
         secondVC.percent = percent
         secondVC.transitionDelegate = transitionDelegate
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
@@ -56,7 +64,8 @@ class ViewController: UIViewController {
     @objc
     func tapButton() {
         transitionDelegate.isTap = true
-        present(secondVC, animated: true, completion: nil)
+//        present(secondVC, animated: true, completion: nil)
+        navigationController?.pushViewController(secondVC, animated: true)
     }
     
     @objc
@@ -79,7 +88,9 @@ class ViewController: UIViewController {
         switch pan.state {
         case .began:
             transitionDelegate.isTap = false
-            present(secondVC, animated: true, completion: nil)
+//            present(secondVC, animated: true, completion: nil)
+            navigationController?.pushViewController(secondVC, animated: true)
+
         case .changed:
             percent.update(-(transition.y) / (view.bounds.height - 200))
             break

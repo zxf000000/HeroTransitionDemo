@@ -45,8 +45,16 @@ class SecondViewController: UIViewController {
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         view.addGestureRecognizer(pan)
         
-        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .done, target: self, action: #selector(tapBack))
     }
+    
+    @objc
+    func tapBack() {
+        transitionDelegate.isTap = true
+        navigationController?.popViewController(animated: true)
+    }
+    
+    
     @objc
     func handlePan(_ pan: UIPanGestureRecognizer) {
         let transition = pan.translation(in: view)
@@ -54,7 +62,8 @@ class SecondViewController: UIViewController {
         switch pan.state {
         case .began:
             transitionDelegate.isTap = false
-            dismiss(animated: true, completion: nil)
+//            dismiss(animated: true, completion: nil)
+            navigationController?.popViewController(animated: true)
         case .changed:
             percent.update((transition.y) / (view.bounds.height - 200))
             break

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
+class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate, UINavigationControllerDelegate {
     
     var isTap: Bool = false
     
@@ -45,6 +45,25 @@ class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
             return nil
         } else {
             return self.interDismiss
+        }
+    }
+    
+    
+    func navigationController(_ navigationController: UINavigationController, interactionControllerFor animationController: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        if isTap {
+            return nil
+        } else {
+            return self.interPresent
+        }
+    }
+
+    
+    
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        if operation == .push {
+            return Transition(true)
+        } else {
+            return Transition(false)
         }
     }
 }

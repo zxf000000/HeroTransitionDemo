@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class Transition: NSObject, UIViewControllerAnimatedTransitioning {
+class Transition: NSObject, UIViewControllerAnimatedTransitioning, UINavigationControllerDelegate {
 
     
     private var isPresent: Bool = true
@@ -31,7 +31,7 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
             if let fromView = fromVC?.view,
                let toView = toVC?.view {
                 container.addSubview(toView)
-                toView.frame = CGRect(x: 0, y: 88, width: container.bounds.size.width, height: container.bounds.size.height)
+                toView.frame = CGRect(x: 0, y: 0, width: container.bounds.size.width, height: container.bounds.size.height)
                 toView.alpha = 0
                 container.layoutIfNeeded()
                 container.updateConstraints()
@@ -54,8 +54,6 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                             imageView.frame = fromFrame!
                             let toFrame = toV.superview?.convert(toV.frame, to: container)
                             container.insertSubview(imageView, belowSubview: toV)
-//                            container.addSubview(imageView)
-                                                        
                             toV.isHidden = true
                             let transitionItem = TransitionItem(fromView: fromV, toView: toV, snapShot: imageView, toFrame: toFrame)
                             snapshots.append(transitionItem)
@@ -69,6 +67,7 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                         item.snapShot.frame = item.toFrame
                     }
                     toView.alpha = 1
+                    fromView.alpha = 0
                 } completion: { (flag) in
                     for item in snapshots {
                         item.fromView.isHidden = false
@@ -106,15 +105,21 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                 }
             }
             
-            
+            print(container.subviews)
+
             if let fromView = fromVC?.view,
                let toView = toVC?.view {
+                // 针对 push pop 转场的设置
+                toView.isHidden = false
+                container.insertSubview(toView, belowSubview: fromView)
+                //
                 UIView.animate(withDuration: 0.25) {
                     
                     for item in snapshots {
                         item.snapShot.frame = item.toFrame
                     }
                     fromView.alpha = 0
+                    toView.alpha = 1
                 } completion: { (flag) in
                     for item in snapshots {
                         item.fromView.isHidden = false
@@ -122,9 +127,14 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                         item.snapShot.isHidden = true
                     }
                     if flag {
+                        // 针对 push pop 转场的设置
+                        if transitionContext.transitionWasCancelled {
+                            toView.isHidden = true
+                        }
+                        //
+                        
                         transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
                     }
-                    
                 }
             }
         }
