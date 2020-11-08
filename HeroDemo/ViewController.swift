@@ -18,11 +18,22 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let blueView = UIView()
+        let blueView = UIImageView()
         blueView.frame = CGRect(x: 100, y: 88, width: 100, height: 100)
-        blueView.backgroundColor = .blue
+        blueView.image = UIImage(named: "1")
+        blueView.contentMode = .scaleAspectFill
+        blueView.layer.masksToBounds = true
         view.addSubview(blueView)
         self.addTransitionView(blueView, key: "blue")
+
+        let view2 = UIImageView()
+        view2.image = UIImage(named: "1")
+        view2.contentMode = .scaleAspectFill
+        view2.layer.masksToBounds = true
+        view.addSubview(view2)
+        view2.frame = CGRect(x: 200, y: 400, width: 100, height: 100)
+        addTransitionView(view2, key: "red")
+        
         self.transitionDelegate = TransitionDelegate(present: Transition(true), dismiss: Transition(false), interPresent: percent, interDismiss: percent)
         secondVC.modalPresentationStyle = .custom
         secondVC.transitioningDelegate = transitionDelegate
@@ -64,9 +75,7 @@ class ViewController: UIViewController {
     @objc
     func handlePan(_ pan: UIPanGestureRecognizer) {
         let transition = pan.translation(in: view)
-        
-        print(transition)
-        
+                
         switch pan.state {
         case .began:
             transitionDelegate.isTap = false

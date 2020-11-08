@@ -44,7 +44,8 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                 if let fromContainer = fromVC?.transitionContainer,
                    let toContainer = toVC?.transitionContainer {
                     for key in fromContainer.keys {
-                        if let fromV = fromContainer[key], let toV = toContainer[key] {
+                        if let fromV = fromContainer.dic[key], let toV = toContainer.dic[key] {
+                            print(key)
                             let img = fromV.screenshot
                             let imageView = UIImageView(image: img)
                             fromV.isHidden = true
@@ -52,10 +53,9 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                             let fromFrame = fromV.superview?.convert(fromV.frame, to: container)
                             imageView.frame = fromFrame!
                             let toFrame = toV.superview?.convert(toV.frame, to: container)
-                            container.addSubview(imageView)
-                            
-                            print(toV.frame)
-                            
+                            container.insertSubview(imageView, belowSubview: toV)
+//                            container.addSubview(imageView)
+                                                        
                             toV.isHidden = true
                             let transitionItem = TransitionItem(fromView: fromV, toView: toV, snapShot: imageView, toFrame: toFrame)
                             snapshots.append(transitionItem)
@@ -63,7 +63,7 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
                         
                     }
                 }
-                UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 10, options: .curveEaseInOut) {
+                UIView.animate(withDuration: 0.25, delay: 0, usingSpringWithDamping: 0.9, initialSpringVelocity: 5, options: .curveLinear) {
                     
                     for item in snapshots {
                         item.snapShot.frame = item.toFrame
@@ -86,7 +86,7 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
             if let fromContainer = fromVC?.transitionContainer,
                let toContainer = toVC?.transitionContainer {
                 for key in fromContainer.keys {
-                    if let fromV = fromContainer[key], let toV = toContainer[key] {
+                    if let fromV = fromContainer.dic[key], let toV = toContainer.dic[key] {
                         let img = fromV.screenshot
                         let imageView = UIImageView(image: img)
                         fromV.isHidden = true
@@ -130,6 +130,7 @@ class Transition: NSObject, UIViewControllerAnimatedTransitioning {
         }
     }
 }
+
 
 struct TransitionItem {
     var fromView: UIView!

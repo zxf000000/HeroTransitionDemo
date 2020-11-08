@@ -10,18 +10,39 @@ import UIKit
 
 var transitionContainerKey = ""
 extension UIViewController {
-    var transitionContainer: [String: UIView] {
+    var transitionContainer: TransitionCotainer? {
         set {
-            objc_setAssociatedObject(self, &transitionContainerKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY_NONATOMIC)
+            objc_setAssociatedObject(self, &transitionContainerKey, newValue, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         get {
-            return objc_getAssociatedObject(self, &transitionContainerKey) as? [String: UIView] ?? [String: UIView]()
+            return objc_getAssociatedObject(self, &transitionContainerKey) as? TransitionCotainer
         }
     }
     
+    
     func addTransitionView(_ view: UIView, key: String) {
-        var dic = self.transitionContainer
-        dic[key] = view
-        transitionContainer = dic
+        var container: TransitionCotainer?
+        if self.transitionContainer == nil {
+            container = TransitionCotainer()
+            let dic = [key: view]
+            container?.dic = dic
+            container?.keys.append(key)
+        } else {
+            container = self.transitionContainer
+            container?.dic[key] = view
+            container?.keys.append(key)
+        }
+        
+        transitionContainer = container
+    }
+}
+
+
+
+class TransitionCotainer {
+    var dic: [String: UIView] = [String: UIView]()
+    var keys: [String] = [String]()
+    init() {
+        
     }
 }
